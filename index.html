@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Template 1 - BIDS</title>
+
+        <!-- Core CSS -->
+        <link href="img/usdos-logo-seal.png" rel="shortcut icon">
+		<link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		<link href="assets/typeahead.js/typeahead.js-bootstrap.css" rel="stylesheet" type="text/css"> <!--https://github.com/jharding/typeahead.js-bootstrap.css-->
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+		<link rel="stylesheet" href="../lib/Leaflet.markercluster/dist/MarkerCluster.css" />
+		<link rel="stylesheet" href="../lib/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
+		<link rel="stylesheet" href="../lib/bootstrap-datepicker/css/datepicker.css">
+		<link rel="stylesheet" href="css/screen.css" />
+		
+		<script src="../lib/jquery/jquery-1.7.2.min.js"></script>
+		<script src="../lib/bootstrap-3.0.3/dist/js/bootstrap.min.js"></script>
+		<script src="../lib/jquery-number/jquery.number.min.js"></script>
+		<script src="../lib/backbone/backbone-min.js"></script>
+		<script src="../lib/underscore/underscore-min.js"></script>
+		<script src="../lib/backgrid-0.3.5/lib/backgrid.min.js"></script>
+		<script src="../lib/jquery-dateFormat/dist/jquery-dateFormat.min.js"></script>
+		<script src="../lib/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+		<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.2"></script>
+		<script type="text/javascript" src="js/host.js"></script>
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			siteParams();
+			ga('create', gaID, host);
+			ga('send', 'pageview');
+		</script>
+		
+        <!-- Custom styles for this template -->
+        <style>
+            html, body, #map {
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+            }
+            body {
+                padding-top: 50px;
+            }
+            input[type="radio"], input[type="checkbox"] {
+                margin: 0;
+            }
+            #loading {
+                position: absolute;
+                width: 220px;
+                height: 19px;
+                top: 50%;
+                left: 50%;
+                margin: -10px 0 0 -110px;
+                z-index: 20001;
+            }
+            #keywordBox {
+                -webkit-border-top-left-radius: 4px;
+                -webkit-border-bottom-left-radius: 4px;
+                -moz-border-top-left-radius: 4px;
+                -moz-border-bottom-left-radius: 4px;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+            }
+            .leaflet-control-layers label {
+                font-weight: normal;
+                margin-bottom: 0px;
+            }
+            .table {
+                margin-bottom: 0px;
+            }
+
+            .navbar .navbar-brand {
+                font-weight: bold;
+                font-size: 25px;
+                color: white;
+            }
+            .navbar-collapse.in {
+                overflow-y: hidden;
+            }
+            .tt-dropdown-menu {
+                overflow: auto;
+            }
+            .tt-hint, .tt-query {
+                display: block;
+                width: 100%;
+                height: 34px;
+                padding: 6px 12px;
+                font-size: 14px;
+                border-radius: 4px;
+            }
+            .typeahead-header {
+                margin: 0 5px 5px 5px;
+                padding: 3px 0;
+                border-bottom: 2px solid #333;
+            }
+            .tt-suggestion + .tt-suggestion {
+                border-top: 1px solid #ccc;
+            }
+            .search-container {
+                width: 250px;
+            }
+            .leaflet-control-layers-expanded {
+                opacity: 0.9;
+            }
+            .leaflet-popup-content {
+                margin-top: 5px;
+                margin-bottom: 5px;
+                margin-left: 5px;
+                margin-right: 5px;
+            }
+            .leaflet-popup-content-wrapper {
+                border-radius: 5px;
+            }
+            @media (max-width: 992px) {
+                .navbar .navbar-brand {
+                    font-size: 18px;
+                    float: left;
+                }
+                .search-container {
+                    width: 150px;
+                }
+            }
+            @media (max-width: 767px){
+                .search-container {
+                    width: 100%;
+                }
+                .url-break {
+                    word-break: break-all;
+                    word-break: break-word;
+                    -webkit-hyphens: auto;
+                    hyphens: auto;
+                }
+            }
+            /* Print Handling */
+            @media print {
+                .navbar {
+                    display: none !important;
+                }
+                .leaflet-control-container {
+                    display: none !important;
+                }
+            }
+			
+			.marker-cluster div {
+				color: white;
+				font-weight: bold;
+				text-shadow: 1px 1px 5px gray;
+			}
+			
+			.leaflet-popup-content {
+				margin-right: 19px;
+			}
+			
+			#viewdetails {
+				overflow-y:scroll;
+				height: 95px !important;
+			}
+			#viewComments {
+				overflow-y:scroll;
+				height: 95px !important;
+			}
+			.navbar-inverse {
+			background-color: #013440;
+			}
+			.marker-cluster-small {
+				background-color: rgba(217, 121, 37, 0.75);
+			}
+			.marker-cluster-medium {
+				background-color: rgba(217, 121, 37, 0.75);
+			}
+			.marker-cluster-large {
+				background-color: rgba(217, 121, 37, 0.75);
+			}
+        </style>
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+		
+		<!-- Select2 -->
+		<link href="../lib/select2-3.4.5/select2.css" rel="stylesheet"/>
+		<script src="../lib/select2-3.4.5/select2.js"></script>
+		<script id="script_sectorDD">
+			$(document).ready(function() {
+				$("#sectorDD").select2();
+			});
+		</script>
+		<script id="script_sizeDD">
+			$(document).ready(function() {
+				$("#sizeDD").select2();
+			});
+		</script>
+		<script id="script_fundingDD">
+			$(document).ready(function() {
+				$("#fundingDD").select2();
+			});
+		</script>
+		<script id="script_statusDD">
+			$(document).ready(function() {
+				$("#statusDD").select2();
+			});
+		</script>
+		<script id="script_archivedDD">
+			$(document).ready(function() {
+				$("#archivedDD").select2();
+			});
+		</script>
+	 </head>
+	 <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">BIDS</a>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+						<a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="$('#searchModal').modal('show'); return false;"><i class="fa fa-search" style="color: white"></i>&nbsp;&nbsp;Search</a>
+					</li>
+					<li>
+						<a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="$('#formModal').modal('show'); return false;"><i class="fa fa-search" style="color: white"></i>&nbsp;&nbsp;Add/Edit Leads</a>
+					</li>
+					<li class="dropdown">
+                        <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-group" style="color: white"></i>&nbsp;&nbsp;Connect <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#";"><i class="fa fa-globe"></i>&nbsp;&nbsp;Create Map Discussion</a></li>
+							<li><a href="http://www.google.com" target="_blank"><i class="fa fa-comments-o"></i>&nbsp;&nbsp;Engage on Corridor</a></li>
+                        </ul>
+                    </li>
+					<li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="$('#aboutModal').modal('show'); return false;"><i class="fa fa-question-circle" style="color: white"></i>&nbsp;&nbsp;About</a></li>
+                    
+                </ul>
+            </div><!--/.navbar-collapse -->
+        </div>
+
+        <div id="map"></div>
+        <div id="loading" style="display:block;">
+            <div class="loading-indicator">
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-info" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="aboutModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Welcome to BIDS</h4>
+                    </div>
+
+                    <div class="modal-body">
+                         <ul id="aboutTabs" class="nav nav-tabs">
+                            <li class="active">
+								<a href="#faqs" data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;FAQs</a>
+							</li>
+                            <li>
+								<a href="#about" data-toggle="tab"><i class="fa fa-check-square"></i>&nbsp;About the project</a>
+							</li>
+                            <li>
+								<a href="#disclaimer" data-toggle="tab"><i class="fa fa-exclamation-circle"></i>&nbsp;Disclaimer</a>
+							</li>
+                            <li>
+                                <a href="#contact" data-toggle="tab"><i class="fa fa-envelope"></i>&nbsp;Contact us</a>
+                            </li>
+                        </ul>
+                        <div id="aboutTabsContent" class="tab-content" style="padding-top: 10px;">
+                            <div class="tab-pane fade active in" id="faqs">
+                                <p>Below are a number of frequently asked questions (FAQs). If an answer to your specific need is not provided, please contact our support team!</p>
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        Questions
+                                    </div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Is this information real?</li>
+                                        <li class="list-group-item">How do I engage with other users?</li>
+                                        <li class="list-group-item">How do I send a question to a post?</li>
+                                        <li class="list-group-item">I represent a post - how can I improve the information bidders see?</li>
+                                        <li class="list-group-item">Can I export a list of the search results?</li>
+                                        <li class="list-group-item">My family is concerned about the quality of <em>plov</em> in Dushanbe - can this tool help us find housing near a good restaurant?</li>
+                                    </ul>
+                                </div>
+                            </div>
+							<div class="tab-pane fade" id="about">
+                                <p>This is a proof-of-concept to revitalize and bring innovation to the bidding process for State Department foreign service officers (FSOs).</p>
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        Features
+                                    </div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">This app is mobile ready!</li>
+                                        <li class="list-group-item">We can bring in external data feeds, such as Yelp, Flickr, etc!</li>
+                                        <li class="list-group-item">This has been designed by action, real, flesh and blood FSOs who want an improved way to bid on positions and posts!</li>
+                                        <li class="list-group-item">The interface you are using is 100% open-source, developed by the eDiplomacy's Geo|DST.</li>
+                                        <li class="list-group-item">The information presented here is SBU.</li>
+                                        <li class="list-group-item">Directly connected to Corridor!</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade text-danger" id="disclaimer">
+                                <p>This tool and the information provided herein are solely a proof-of-concept being developed by the Office of eDiplomacy's Geo|DST, on behalf of HR/CDA. If you are interested in this project, please direct your feedback to eDip and HR/CDA!</p>
+                            </div>
+                            <div class="tab-pane fade" id="contact">
+                                <form id="contact-form">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label for="name">Name:</label>
+                                            <input type="text" class="form-control" id="name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email:</label>
+                                            <input type="text" class="form-control" id="email">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="comment">Comment:</label>
+                                            <textarea class="form-control" rows="3" id="comment"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Submit</button>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+		<div class="modal fade" id="searchModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Search for leads!</h4>
+                    </div>
+                    <div class="modal-body">
+							<h4>Sectors </h4>
+							<select multiple name="sectorDD" id="sectorDD" style="width:100%" class="source">
+								<option value="Administrative and Support and Waste Management and Remediation Services">Administrative and Support and Waste Management and Remediation Services</option>
+								<option value="Agriculture, Forestry, Fishing and Hunting">Agriculture, Forestry, Fishing and Hunting</option>
+								<option value="Construction">Construction</option>
+								<option value="Educational Services">Educational Services</option>
+								<option value="Finance and Insurance">Finance and Insurance</option>
+								<option value="Health Care and Social Assistance">Health Care and Social Assistance</option>
+								<option value="Information">Information</option>
+								<option value="Manufacturing">Manufacturing</option>
+								<option value="Mining, Quarrying, and Oil and Gas Extraction">Mining, Quarrying, and Oil and Gas Extraction</option>
+								<option value="Professional, Scientific, and Technical Services">Professional, Scientific, and Technical Services</option>
+								<option value="Public Administration">Public Administration</option>
+								<option value="Transportation and Warehousing">Transportation and Warehousing</option>
+								<option value="Utilities">Utilities</option>
+							</select>
+							<h4>Project Size</h4>
+							<select multiple name="sizeDD" id="sizeDD" style="width:100%" class="source">
+								<option value="">Less than $25M</option>
+								<option value="">$25-49M</option>
+								<option value="">$50-99M</option>
+								<option value="">$100M or more</option>
+							</select>
+							<h4>Funding Source</h4>
+							<select multiple name="fundingDD" id="fundingDD" style="width:100%" class="source">
+								<option value="Development Banks">Development Banks</option>
+								<option value="Government">Government</option>
+								<option value="Private">Private</option>
+								<option value="Self Financed">Self Financed</option>
+								<option value="Other">Other</option>
+							</select>
+							<h4>Project Announced Date</h4>
+							<div class="input-daterange input-group" id="datepicker">
+								<input type="text" class="input-sm form-control" name="start" />
+								<span class="input-group-addon">to</span>
+								<input type="text" class="input-sm form-control" name="end" />
+							</div>
+							<h4>Tender Announced Date</h4>
+							<div class="input-daterange input-group" id="datepicker">
+								<input type="text" class="input-sm form-control" name="start" />
+								<span class="input-group-addon">to</span>
+								<input type="text" class="input-sm form-control" name="end" />
+							</div>
+							<h4>Status</h4>
+							<select multiple name="statusDD" id="statusDD" style="width:100%;" class="source">
+								<option value="Pipeline">Pipeline</option>
+								<option value="In procurement">In procurement</option>
+								<option value="Fulfilled">Fulfilled</option>
+            				</select>
+							<h4>Active/Archived</h4>
+							<select multiple name="archivedDD" id="archivedDD" style="width:100%;" class="source">
+								<option value="0">Active</option>
+								<option value="1">Archived</option>
+            				</select>
+							<h4>Keywords: </h4>
+							<form class="navbar-form navbar" style="padding: 0px 0px;">
+								<div class="input-group search-container" style="width:100%;">
+									<input id="keywordBox" type="text" class="form-control" placeholder="Enter keywords">
+									<span class="input-group-addon"><i class="fa fa-search"></i></span>
+								</div>
+							</form>
+							<button type="button" class="btn btn-primary btn-block" onclick="searchFunc();" style="width:100%;">Search</button>
+					</div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+		<div class="modal fade" id="formModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Add/Edit Your Leads!</h4>
+                    </div>
+                    <div class="modal-body">
+							<h4>Sectors </h4>
+							<select multiple name="sectorDD" id="sectorDD" style="width:100%" class="source">
+								<option value="Administrative and Support and Waste Management and Remediation Services">Administrative and Support and Waste Management and Remediation Services</option>
+								<option value="Agriculture, Forestry, Fishing and Hunting">Agriculture, Forestry, Fishing and Hunting</option>
+								<option value="Construction">Construction</option>
+								<option value="Educational Services">Educational Services</option>
+								<option value="Finance and Insurance">Finance and Insurance</option>
+								<option value="Health Care and Social Assistance">Health Care and Social Assistance</option>
+								<option value="Information">Information</option>
+								<option value="Manufacturing">Manufacturing</option>
+								<option value="Mining, Quarrying, and Oil and Gas Extraction">Mining, Quarrying, and Oil and Gas Extraction</option>
+								<option value="Professional, Scientific, and Technical Services">Professional, Scientific, and Technical Services</option>
+								<option value="Public Administration">Public Administration</option>
+								<option value="Transportation and Warehousing">Transportation and Warehousing</option>
+								<option value="Utilities">Utilities</option>
+							</select>
+							<h4>Project Size</h4>
+							<select multiple name="sizeDD" id="sizeDD" style="width:100%" class="source">
+								<option value="">Less than $25M</option>
+								<option value="">$25-49M</option>
+								<option value="">$50-99M</option>
+								<option value="">$100M or more</option>
+							</select>
+							<h4>Funding Source</h4>
+							<select multiple name="fundingDD" id="fundingDD" style="width:100%" class="source">
+								<option value="Development Banks">Development Banks</option>
+								<option value="Government">Government</option>
+								<option value="Private">Private</option>
+								<option value="Self Financed">Self Financed</option>
+								<option value="Other">Other</option>
+							</select>
+							<h4>Project Announced Date</h4>
+							<div class="input-daterange input-group" id="datepicker">
+								<input type="text" class="input-sm form-control" name="start" />
+								<span class="input-group-addon">to</span>
+								<input type="text" class="input-sm form-control" name="end" />
+							</div>
+							<h4>Tender Announced Date</h4>
+							<div class="input-daterange input-group" id="datepicker">
+								<input type="text" class="input-sm form-control" name="start" />
+								<span class="input-group-addon">to</span>
+								<input type="text" class="input-sm form-control" name="end" />
+							</div>
+							<h4>Status</h4>
+							<select multiple name="statusDD" id="statusDD" style="width:100%;" class="source">
+								<option value="Pipeline">Pipeline</option>
+								<option value="In procurement">In procurement</option>
+								<option value="Fulfilled">Fulfilled</option>
+            				</select>
+							<h4>Active/Archived</h4>
+							<select multiple name="archivedDD" id="archivedDD" style="width:100%;" class="source">
+								<option value="0">Active</option>
+								<option value="1">Archived</option>
+            				</select>
+							<h4>Keywords: </h4>
+							<form class="navbar-form navbar" style="padding: 0px 0px;">
+								<div class="input-group search-container" style="width:100%;">
+									<input id="keywordBox" type="text" class="form-control" placeholder="Enter keywords">
+									<span class="input-group-addon"><i class="fa fa-search"></i></span>
+								</div>
+							</form>
+							<button type="button" class="btn btn-primary btn-block" onclick="searchFunc();" style="width:100%;">Search</button>
+					</div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+		<div class="modal fade" id="leadModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Lead Details</h4>
+                    </div>
+                    <div class="modal-body">
+                         <ul id="leadTabs" class="nav nav-tabs">
+                            <li class="active">
+								<a href="#leadDescrip" data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;Description</a>
+							</li>
+                            <li>
+								<a href="#leadComments" data-toggle="tab"><i class="fa fa-check-square"></i>&nbsp;Post Comments</a>
+							</li>
+                        </ul>
+                        <div id="aboutTabsContent" class="tab-content" style="padding-top: 10px;">
+                            <div class="tab-pane fade active in" id="leadDescrip">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        Description
+                                    </div>
+                                    <div style="padding-left: 15px">
+										<p style="padding-top: 15px">
+											<span>feature.properties.Project_Description</span><br>
+										</p>
+									</div>
+                                </div>
+                            </div>
+							<div class="tab-pane fade" id="leadComments">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        Post Comments
+                                    </div>
+                                    <div style="padding-left: 15px">
+										<p style="padding-top: 15px">
+											<span>feature.properties.Post_Comments</span><br>
+										</p>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+				
+		<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js?2"></script>
+        <script src="../lib/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+		<script type="text/javascript">
+			$('.input-daterange').datepicker({
+                    todayBtn: "linked"
+                });
+			
+			var urlWhole = "http://" + host + "/geoserver/opengeo/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opengeo:DATATABLE&srsName=EPSG:4326&outputformat=json";
+			var urlFiltered = "";
+			
+			var descripVal = "Incumbent is the Political/Economic Deputy Chief and senior Economic Officer. S/he reports to the Political/Economic Chief and supervises two Locally Employed (LE) Economic Staff and two Eligible Family Member (EFM) Economic Assistants. Increased economic engagement including trade and investment is a top priority, and the incumbent works closely with the Foreign Commercial Service, Foreign Agricultural Service, and other partners such as the American Chamber of Commerce in Cambodia. The economic portfolio also includes macroeconomic issues, bilateral debt, protection of intellectual property rights, and foreign assistance trends in Cambodia. The Deputy Chief acts as Section Chief in the absence of Political/Economic Chief. POC: POL/ECON Chief Darren Hultman, DCM Jeff Daigle, and Deputy Director (EAP/MLS). Updated July 2013.";
+			
+			var cmAttr = "<a href='mailto:dittemoremb@state.gov'>eDiplomacy Geo|DST</a>",
+			//cmAttr = 'Data: <a href="http://www.eia.gov/countries/data.cfm" title="U.S. Energy Information Administration">EIA</a>, <a href="http://www.openstreetmap.org/" title="&copy; OpenStreetMap contributors">OpenStreetMap</a>, <a href="http://www.cloudmade.com/" title="&copy; 2011 CloudMade">CloudMade</a>, <a href="http://www.stamen.com/" title="Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.">Stamen Design</a>',
+			cmUrl = 'http://{s}.tile.cloudmade.com/0de6cf4ab5c94f978d85a48c6413b382/{styleId}/256/{z}/{x}/{y}.png';
+		
+			var minimal   = L.tileLayer(cmUrl, {styleId: 22677, attribution: cmAttr});
+			
+			var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+				{ attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors' }
+			);
+
+			var map = new L.Map('map', {
+				center: [20, 10],
+				zoom: 3,
+				layers: [minimal]
+			});
+			
+			var markers;
+			var updateMarkers;
+			
+			function getGeoJson(data) {
+				var geoJsonLayer = new L.geoJson(data, {
+					onEachFeature: function (feature, layer) {
+						//layer.bindPopup("<h4><a href='#leadDetails' data-toggle='modal' data-target='#leadModal'>" + feature.properties.Project_Title + "</a><br><small>" + feature.properties.Sector + ", US$" + $.number(feature.properties.Project_Size) + "<br></small></h4><h5><small>Status: </small>" + feature.properties.Status + "<br><small>Date Added: </small>" + $.format.date("feature.properties.Project_Announced", 'dd/MM/yyyy') + "<small><br>Primary Funding Source: </small>" + feature.properties.Project_Funding_Source + "<br><div class='row'><div class='span collapse-group'><p class='collapse' id='viewdetails' style='padding-left: 20px; padding-right: 10px;'>" + feature.properties.Project_Description + "</p><button type='button' class='btn btn-info btn-xs' data-toggle='collapse' data-target='#viewdetails' style='margin:15px 0px 0px 15px;'>View details</button><p class='collapse' id='viewComments' style='padding-left: 20px; padding-right: 10px;'>" + feature.properties.Post_Comments + "</p></div></div><br><div class='row'><div class='span collapse-group'><button type='button' class='btn btn-info btn-xs' data-toggle='collapse' data-target='#viewComments' style='margin:15px 0px 0px 15px;'>Post Comments</button></div></div><div class='btn-group' ><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Link_To_Project + "' target='_blank' onclick='javascript:ga('send', 'event', 'External_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Lead Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Business_URL + "' target='_blank' onclick='javascript:ga('send', 'event', 'Business_Tab_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Embassy Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='mailto:" + feature.properties.Submitting_Officer_Contact + "?Subject=BIDS: " + feature.properties.Project_Title + "' target='_blank' onclick='javascript:ga('send', 'event', 'Contact', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Contact Embassy</a></button></div></div></div></h5>");
+						layer.bindPopup("<h4><a href='#leadDetails' data-toggle='modal' data-target='#leadModal'>" + feature.properties.Project_Title + "</a><br><small>" + feature.properties.Sector + ", US$" + $.number(feature.properties.Project_Size) + "<br></small></h4><h5><small>Status: </small>" + feature.properties.Status + "<br><small>Date Added: </small>" + $.format.date("feature.properties.Project_Announced", 'dd/MM/yyyy') + "<small><br>Primary Funding Source: </small>" + feature.properties.Project_Funding_Source + "<br><div class='btn-group' style='margin:10px;'><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Link_To_Project + "' target='_blank' onclick='javascript:ga('send', 'event', 'External_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Lead Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Business_URL + "' target='_blank' onclick='javascript:ga('send', 'event', 'Business_Tab_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Embassy Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='mailto:" + feature.properties.Submitting_Officer_Contact + "?Subject=BIDS: " + feature.properties.Project_Title + "' target='_blank' onclick='javascript:ga('send', 'event', 'Contact', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Contact Embassy</a></button></div></div></div></h5>");
+					}
+				});
+				
+				markers = L.markerClusterGroup({showCoverageOnHover: false, maxClusterRadius: 30});
+				markers.addLayer(geoJsonLayer);
+				map.addLayer(markers);
+			}
+	
+			$.ajax({
+				url: urlWhole,
+				dataType: 'json',
+				jsonpCallback: getGeoJson,
+				success: getGeoJson
+			});
+			
+			// Typeahead search functionality
+			$(document).one("ajaxStop", function() {
+                $("#loading").hide();
+            });
+			
+			searchFunc = function() {
+				var sectorVal;
+				var sizeVal;
+				var statusVal;
+				var archivedVal;
+				var keywordVal;
+				
+				var sectorFilter;
+				var sizeFilter;
+				var statusFilter;
+				var archivedFilter;
+				var keywordFilter;
+				
+				if (document.getElementById('sectorDD').length > 0) {
+					sectorVal = document.getElementById('sectorDD').value;
+				}
+				else {
+					sectorVal = "";
+				}
+				sectorFilter = "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Sector</PropertyName><Literal>*" + sectorVal + "*</Literal></PropertyIsLike>";
+				
+				if (document.getElementById('sizeDD').length > 0) {
+					sizeVal = document.getElementById('sizeDD').value;
+				}
+				else {
+					sizeVal = "";
+				}
+				sizeFilter = "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Project_Size</PropertyName><Literal>*" + sizeVal + "*</Literal></PropertyIsLike>";
+				
+				if (document.getElementById('statusDD').length > 0) {
+					statusVal = document.getElementById('statusDD').value;
+				}
+				else {
+					sizeVal = "";
+				}
+				statusFilter = "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Status</PropertyName><Literal>*" + statusVal + "*</Literal></PropertyIsLike>";
+				
+				if (document.getElementById('archivedDD').length > 0) {
+					archivedVal = document.getElementById('archivedDD').value;
+				}
+				else {
+					archivedVal = "";
+				}
+				archivedFilter = "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Archived</PropertyName><Literal>*" + archivedVal + "*</Literal></PropertyIsLike>";
+				
+				if (document.getElementById('keywordBox').length > 0) {
+					archivedVal = document.getElementById('keywordBox').value;
+				}
+				else {
+					keywordVal = "";
+				}
+				keywordFilter = "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Project_Title</PropertyName><Literal>*" + keywordVal + "*</Literal></PropertyIsLike><PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Project_Description</PropertyName><Literal>*" + keywordVal + "*</Literal></PropertyIsLike>";
+				
+				urlFiltered = urlWhole + "&Filter=<Filter><And>" + sectorFilter + sizeFilter + statusFilter+ archivedFilter + keywordFilter + "</And></Filter>";
+				//urlFiltered = urlWhole + "&Filter=<Filter><And>" + sectorFilter + "<PropertyIsEqualTo><PropertyName>Project_Size</PropertyName><Literal>" + sizeVal + "</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>Status</PropertyName><Literal>" + statusVal + "</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>Archived</PropertyName><Literal>" + archivedVal + "</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>Project_Title</PropertyName><Literal>" + keyVal + "</Literal></PropertyIsEqualTo><PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\" matchCase=\"false\"><PropertyName>Project_Description</PropertyName><Literal>*" + keyVal + "*</Literal></PropertyIsLike></And></Filter>";
+				console.log(urlFiltered);
+
+				function updateGeoJson(data) {
+					map.removeLayer(markers);
+					
+					var updateGeoJsonLayer = new L.geoJson(data, {
+						onEachFeature: function (feature, layer) {
+							layer.bindPopup("<h4><a href='#leadDetails' data-toggle='modal' data-target='#leadModal'>" + feature.properties.Project_Title + "</a><br><small>" + feature.properties.Sector + ", US$" + $.number(feature.properties.Project_Size) + "<br></small></h4><h5><small>Status: </small>" + feature.properties.Status + "<br><small>Date Added: </small>" + $.format.date("feature.properties.Project_Announced", 'dd/MM/yyyy') + "<small><br>Primary Funding Source: </small>" + feature.properties.Project_Funding_Source + "<br><div class='btn-group' style='margin:10px;'><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Link_To_Project + "' target='_blank' onclick='javascript:ga('send', 'event', 'External_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Lead Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Business_URL + "' target='_blank' onclick='javascript:ga('send', 'event', 'Business_Tab_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Embassy Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='mailto:" + feature.properties.Submitting_Officer_Contact + "?Subject=BIDS: " + feature.properties.Project_Title + "' target='_blank' onclick='javascript:ga('send', 'event', 'Contact', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Contact Embassy</a></button></div></div></div></h5>");
+						}
+					});
+				
+					markers = L.markerClusterGroup({showCoverageOnHover: false, maxClusterRadius: 30});
+					markers.addLayer(updateGeoJsonLayer);
+					map.addLayer(markers);
+				}
+	
+				$.ajax({
+					url: urlFiltered,
+					dataType: 'json',
+					jsonpCallback: updateGeoJson,
+					success: updateGeoJson
+				});
+			
+				// Typeahead search functionality
+				$(document).one("ajaxStop", function() {
+					$("#loading").hide();
+				});				
+			}
+        </script>
+    </body>
+</html>
