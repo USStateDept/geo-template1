@@ -573,8 +573,7 @@
 			function getGeoJson(data) {
 				var geoJsonLayer = new L.geoJson(data, {
 					onEachFeature: function (feature, layer) {
-						//layer.bindPopup("<h4><a href='#leadDetails' data-toggle='modal' data-target='#leadModal'>" + feature.properties.Project_Title + "</a><br><small>" + feature.properties.Sector + ", US$" + $.number(feature.properties.Project_Size) + "<br></small></h4><h5><small>Status: </small>" + feature.properties.Status + "<br><small>Date Added: </small>" + $.format.date("feature.properties.Project_Announced", 'dd/MM/yyyy') + "<small><br>Primary Funding Source: </small>" + feature.properties.Project_Funding_Source + "<br><div class='row'><div class='span collapse-group'><p class='collapse' id='viewdetails' style='padding-left: 20px; padding-right: 10px;'>" + feature.properties.Project_Description + "</p><button type='button' class='btn btn-info btn-xs' data-toggle='collapse' data-target='#viewdetails' style='margin:15px 0px 0px 15px;'>View details</button><p class='collapse' id='viewComments' style='padding-left: 20px; padding-right: 10px;'>" + feature.properties.Post_Comments + "</p></div></div><br><div class='row'><div class='span collapse-group'><button type='button' class='btn btn-info btn-xs' data-toggle='collapse' data-target='#viewComments' style='margin:15px 0px 0px 15px;'>Post Comments</button></div></div><div class='btn-group' ><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Link_To_Project + "' target='_blank' onclick='javascript:ga('send', 'event', 'External_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Lead Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Business_URL + "' target='_blank' onclick='javascript:ga('send', 'event', 'Business_Tab_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Embassy Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='mailto:" + feature.properties.Submitting_Officer_Contact + "?Subject=BIDS: " + feature.properties.Project_Title + "' target='_blank' onclick='javascript:ga('send', 'event', 'Contact', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Contact Embassy</a></button></div></div></div></h5>");
-						layer.bindPopup("<h4><a href='#leadDetails' data-toggle='modal' data-target='#leadModal'>" + feature.properties.Project_Title + "</a><br><small>" + feature.properties.Sector + ", US$" + $.number(feature.properties.Project_Size) + "<br></small></h4><h5><small>Status: </small>" + feature.properties.Status + "<br><small>Date Added: </small>" + $.format.date("feature.properties.Project_Announced", 'dd/MM/yyyy') + "<small><br>Primary Funding Source: </small>" + feature.properties.Project_Funding_Source + "<br><div class='btn-group' style='margin:10px;'><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Link_To_Project + "' target='_blank' onclick='javascript:ga('send', 'event', 'External_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Lead Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Business_URL + "' target='_blank' onclick='javascript:ga('send', 'event', 'Business_Tab_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Embassy Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='mailto:" + feature.properties.Submitting_Officer_Contact + "?Subject=BIDS: " + feature.properties.Project_Title + "' target='_blank' onclick='javascript:ga('send', 'event', 'Contact', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Contact Embassy</a></button></div></div></div></h5>");
+						layer.bindPopup("<h4><a href='#leadDetails' data-toggle='modal' data-target='#leadModal'>" + feature.properties.Project_Title + "</a><br><small>" + feature.properties.Sector + ", US$" + $.number(feature.properties.Project_Size) + "<br></small></h4><h5><small>Status: </small>" + feature.properties.Status + "<br><small>Date Added: </small>" + /*$.format.date("feature.properties.Project_Announced", 'dd/MM/yyyy')*/feature.properties.Timestamp + "<small><br>Primary Funding Source: </small>" + feature.properties.Project_Funding_Source + "<br><div class='row'><div class='span collapse-group'><h6 class='collapse' id='viewdetails' style='padding-left: 20px; padding-right: 10px; color: #999; line-height:1.2; margin-bottom: 0px !important;'>" + feature.properties.Project_Description + "</h6><br><div class='btn-group' style='margin:0px 0px 0px 15px;'><button type='button' class='btn btn-default btn-xs' data-toggle='collapse' data-target='#viewdetails'>View Details </button><div class='btn-group'><button type='button' class='btn btn-default dropdown-toggle btn-xs' data-toggle='dropdown'>Links&nbsp;&nbsp;<span class='caret'></span></button><ul class='dropdown-menu' role='menu'><li><a href='" + feature.properties.Link_To_Project + "' target='_blank' onclick='javascript:ga('send', 'event', 'External_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Lead Website</a></li><li><a href='" + feature.properties.Business_URL + "' target='_blank' onclick='javascript:ga('send', 'event', 'Business_Tab_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Embassy Website</a></li></ul></div><button type='button' class='btn btn-default btn-xs'><a href='mailto:" + feature.properties.Submitting_Officer_Contact + "?Subject=BIDS: " + feature.properties.Project_Title + "' target='_blank' onclick='javascript:ga('send', 'event', 'Contact', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Contact Embassy</a></button></div></div></div></h5>", {maxWidth: 400, minWidth: 300, maxHeight: 160, autoPan: true, closeButton: true, autoPanPadding: [5, 5]});
 					}
 				});
 				
@@ -624,13 +623,40 @@
 				}
 				sizeFilter = "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Project_Size</PropertyName><Literal>*" + sizeVal + "*</Literal></PropertyIsLike>";
 				
-				if (document.getElementById('statusDD').length > 0) {
-					statusVal = document.getElementById('statusDD').value;
+				
+				
+				
+				
+				/////////////////
+				//////Status
+				//////////////////
+				// is not iterating through array. Only returning last item.
+				if ($("#statusDD").val().length > 0) {
+					statusVal = $("#statusDD").select2("val");
+					if (statusVal.length > 1) {
+						var statusCount = statusVal.length;
+						alert(statusCount); //returns a count
+						alert(statusCount[i]); //undefined??
+						for (var i = 0; i < statusCount; i++) {
+							statusFilter = "<Or><PropertyIsEqualTo><PropertyName>" + "Status" + "</PropertyName><Literal>" + statusVal[i] + "</Literal></PropertyIsEqualTo></Or>"
+						}
+					} else {
+						statusFilter = "<PropertyIsEqualTo><PropertyName>" + "Status" + "</PropertyName><Literal>" + statusVal + "</Literal></PropertyIsEqualTo>"
+					}
+					//count = count + 1;
 				}
 				else {
-					sizeVal = "";
+					statusVal = "";
 				}
-				statusFilter = "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Status</PropertyName><Literal>*" + statusVal + "*</Literal></PropertyIsLike>";
+				//statusFilter = "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>Status</PropertyName><Literal>*" + statusVal + "*</Literal></PropertyIsLike>";
+				
+				
+				
+				
+				
+				
+				
+				
 				
 				if (document.getElementById('archivedDD').length > 0) {
 					archivedVal = document.getElementById('archivedDD').value;
@@ -657,7 +683,7 @@
 					
 					var updateGeoJsonLayer = new L.geoJson(data, {
 						onEachFeature: function (feature, layer) {
-							layer.bindPopup("<h4><a href='#leadDetails' data-toggle='modal' data-target='#leadModal'>" + feature.properties.Project_Title + "</a><br><small>" + feature.properties.Sector + ", US$" + $.number(feature.properties.Project_Size) + "<br></small></h4><h5><small>Status: </small>" + feature.properties.Status + "<br><small>Date Added: </small>" + $.format.date("feature.properties.Project_Announced", 'dd/MM/yyyy') + "<small><br>Primary Funding Source: </small>" + feature.properties.Project_Funding_Source + "<br><div class='btn-group' style='margin:10px;'><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Link_To_Project + "' target='_blank' onclick='javascript:ga('send', 'event', 'External_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Lead Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='" + feature.properties.Business_URL + "' target='_blank' onclick='javascript:ga('send', 'event', 'Business_Tab_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Embassy Website</a></button><button type='button' class='btn btn-link btn-xs'><a href='mailto:" + feature.properties.Submitting_Officer_Contact + "?Subject=BIDS: " + feature.properties.Project_Title + "' target='_blank' onclick='javascript:ga('send', 'event', 'Contact', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Contact Embassy</a></button></div></div></div></h5>");
+							layer.bindPopup("<h4><a href='#leadDetails' data-toggle='modal' data-target='#leadModal'>" + feature.properties.Project_Title + "</a><br><small>" + feature.properties.Sector + ", US$" + $.number(feature.properties.Project_Size) + "<br></small></h4><h5><small>Status: </small>" + feature.properties.Status + "<br><small>Date Added: </small>" + /*$.format.date("feature.properties.Project_Announced", 'dd/MM/yyyy')*/feature.properties.Timestamp + "<small><br>Primary Funding Source: </small>" + feature.properties.Project_Funding_Source + "<br><div class='row'><div class='span collapse-group'><h6 class='collapse' id='viewdetails' style='padding-left: 20px; padding-right: 10px; color: #999; line-height:1.2; margin-bottom: 0px !important;'>" + feature.properties.Project_Description + "</h6><br><div class='btn-group' style='margin:0px 0px 0px 15px;'><button type='button' class='btn btn-default btn-xs' data-toggle='collapse' data-target='#viewdetails'>View Details </button><div class='btn-group'><button type='button' class='btn btn-default dropdown-toggle btn-xs' data-toggle='dropdown'>Links&nbsp;&nbsp;<span class='caret'></span></button><ul class='dropdown-menu' role='menu'><li><a href='" + feature.properties.Link_To_Project + "' target='_blank' onclick='javascript:ga('send', 'event', 'External_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Lead Website</a></li><li><a href='" + feature.properties.Business_URL + "' target='_blank' onclick='javascript:ga('send', 'event', 'Business_Tab_Link', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Embassy Website</a></li></ul></div><button type='button' class='btn btn-default btn-xs'><a href='mailto:" + feature.properties.Submitting_Officer_Contact + "?Subject=BIDS: " + feature.properties.Project_Title + "' target='_blank' onclick='javascript:ga('send', 'event', 'Contact', '" + feature.properties.Project_Title + "_Lead_Details', {'nonInteraction': 1});'>Contact Embassy</a></button></div></div></div></h5>", {maxWidth: 400, minWidth: 300, maxHeight: 160, autoPan: true, closeButton: true, autoPanPadding: [5, 5]});
 						}
 					});
 				
