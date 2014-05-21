@@ -811,7 +811,7 @@
 				//////Keywords
 				//////////////////
 				alert($("#keywordBox").val());
-				(if ($("#keywordBox").val() !== null) {
+				if ($("#keywordBox").val() !== null) {
 					if ($("#keywordBox").length > 0) {
 						keywordVal = $("#keywordBox").val().replace(" ", "*");
 						keywordValPart += "<PropertyIsLike wildCard=\"*\" singleChar=\".\" escape=\"!\"><PropertyName>" + "Keyword" + "</PropertyName><Literal>*" + keywordVal + "*</Literal></PropertyIsLike>"
